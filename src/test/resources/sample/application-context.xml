@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:jpa="http://www.springframework.org/schema/data/jpa" 
+    xsi:schemaLocation="
+      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+      http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+    <context:annotation-config />
+    <jpa:repositories base-package="org.anderes.edu.dbunitburner.sample.data" />
+
+    <!-- JPA Entity Manager -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="org.anderes.edu.dbunitburner.sample.data" />
+        <property name="jpaDialect" ref="jpaDialect" />
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter">
+                <property name="showSql" value="true" />
+            </bean>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="javax.persistence.schema-generation.create-database-schemas">true</prop>
+                <prop key="javax.persistence.schema-generation.database.action">create</prop>
+                <prop key="javax.persistence.schema-generation.create-source">metadata</prop>
+                <prop key="javax.persistence.validation.mode">auto</prop>
+                <prop key="eclipselink.target-database">Derby</prop>
+                <prop key="eclipselink.jdbc.native-sql">true</prop>
+                <prop key="eclipselink.logging.parameters">true</prop>
+                <prop key="eclipselink.weaving">false</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- Data Source: Derby Embedded -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
+        <property name="url" value="jdbc:derby:memory:testDB;create=true" />
+        <property name="username" value="" />
+        <property name="password" value="" />
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+    <bean id="jpaDialect" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaDialect" />
+      
+</beans>

@@ -1,0 +1,22 @@
+{
+	"RECIPE": [
+		{
+			"ID": 100,
+			"TITLE": "Arabische Spaghetti",
+			"PREAMBLE": "Da bei diesem Rezept das Scharfe (Curry) mit dem Süssen (Sultaninen) gemischt wird, habe ich diese Rezept \"Arabische Spaghetti\" benannt.",
+			"ADDINGDATE": "22.01.2014 23:03:20"
+		}
+	],
+	"INGREDIENT": [
+		{
+			"ID": 1000,
+			"DESCRIPTION": "Kokosmilch",
+			"RECIPE_ID": 100
+		},
+		{
+			"ID": 1001,
+			"DESCRIPTION": "Spaghetti",
+			"RECIPE_ID": 100
+		}
+	]
+}

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dataset SYSTEM "forDbUnitRuleTest.dtd">
+<dataset>
+	<TEST_TABLE COL0="row 0 col 0" COL1="row 0 col 1" COL2="row 0 col 2"/>
+	<TEST_TABLE COL1="row 1 col 1"/>
+	<SECOND_TABLE COL0="row 0 col 0" COL1="row 0 col 1"/>
+	<EMPTY_TABLE/>
+</dataset>
