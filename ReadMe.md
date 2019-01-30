@@ -73,6 +73,8 @@ public class RecipeRepositoryIT {
         Iterable<Recipe> recipes = repository.findAll();
 ```
 
+[![](https://jitpack.io/v/rene-anderes/dbUnitBurner5.svg)](https://jitpack.io/#rene-anderes/dbUnitBurner5)
+
 
 
 
