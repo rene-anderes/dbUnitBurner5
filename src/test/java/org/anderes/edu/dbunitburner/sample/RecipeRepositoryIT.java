@@ -10,6 +10,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
@@ -71,9 +72,9 @@ public class RecipeRepositoryIT {
     @Test
     @UsingDataSet(value = { "/sample/prepare.xls" })
     public void shouldBeOneRecipe() {
-        final Recipe recipe = repository.findOne("c0e5582e-252f-4e94-8a49-e12b4b047afb");
-        assertNotNull(recipe);
-        assertThat(recipe.getTitle(), is("Arabische Spaghetti"));
+        final Optional<Recipe> recipe = repository.findById("c0e5582e-252f-4e94-8a49-e12b4b047afb");
+        assertThat(recipe.isPresent(), is(true));
+        assertThat(recipe.get().getTitle(), is("Arabische Spaghetti"));
     }
     
     @Test
@@ -104,9 +105,10 @@ public class RecipeRepositoryIT {
         assertThat(savedRecipe, is(not(nullValue())));
         assertThat(savedRecipe.getUuid(), is(not(nullValue())));
         
-        final Recipe findRecipe = repository.findOne(savedRecipe.getUuid());
-        assertNotSame(newRecipe, findRecipe);
-        assertThat(newRecipe, is(findRecipe));
+        final Optional<Recipe> findRecipe = repository.findById(savedRecipe.getUuid());
+        assertThat(findRecipe.isPresent(), is(true));
+        assertNotSame(newRecipe, findRecipe.get());
+        assertThat(newRecipe, is(findRecipe.get()));
     }
     
     @Test
@@ -116,20 +118,22 @@ public class RecipeRepositoryIT {
             orderBy = { "RECIPE.UUID", "INGREDIENT.ANNOTATION" }
     )
     public void shouldBeUpdateRecipe() {
-        final Recipe updateRecipe = repository.findOne("c0e5582e-252f-4e94-8a49-e12b4b047afb");
-        updateRecipe.setPreamble("Neuer Preamble vom Test");
-        updateRecipe.addIngredient(new Ingredient("1", "Tomate", "vollreif"));
-        final Recipe savedRecipe = repository.save(updateRecipe);
+        final Optional<Recipe> updateRecipe = repository.findById("c0e5582e-252f-4e94-8a49-e12b4b047afb");
+        assertThat(updateRecipe.isPresent(), is(true));
+        updateRecipe.get().setPreamble("Neuer Preamble vom Test");
+        updateRecipe.get().addIngredient(new Ingredient("1", "Tomate", "vollreif"));
+        final Recipe savedRecipe = repository.save(updateRecipe.get());
         
         assertThat(savedRecipe, is(not(nullValue())));
         assertThat(savedRecipe.getPreamble(), is("Neuer Preamble vom Test"));
         assertThat(savedRecipe.getIngredients().size(), is(4));
         
-        final Recipe findRecipe = repository.findOne(savedRecipe.getUuid());
-        assertThat(findRecipe, is(not(nullValue())));
-        assertThat(findRecipe.getPreamble(), is("Neuer Preamble vom Test"));
-        assertNotSame(updateRecipe, findRecipe);
-        assertThat(updateRecipe, is(findRecipe));
+        final Optional<Recipe> findRecipe = repository.findById(savedRecipe.getUuid());
+        assertThat(findRecipe.isPresent(), is(true));
+        final Recipe recipe = findRecipe.get();
+        assertThat(recipe.getPreamble(), is("Neuer Preamble vom Test"));
+        assertNotSame(updateRecipe.get(), recipe);
+        assertThat(updateRecipe.get(), is(recipe));
     }
     
     @Test
@@ -138,9 +142,9 @@ public class RecipeRepositoryIT {
             excludeColumns = { "RECIPE.ADDINGDATE" },
             orderBy = { "RECIPE.UUID", "INGREDIENT.ID" })
     public void shouldBeDelete() {
-        final Recipe toDelete = repository.findOne("c0e5582e-252f-4e94-8a49-e12b4b047afb");
-        assertThat("Das Rezept mit der ID 'c0e5582e-252f-4e94-8a49-e12b4b047afb' existiert nicht in der Datenbank", toDelete, is(not(nullValue())));
-        repository.delete(toDelete);
+        final Optional<Recipe> toDelete = repository.findById("c0e5582e-252f-4e94-8a49-e12b4b047afb");
+        assertThat("Das Rezept mit der ID 'c0e5582e-252f-4e94-8a49-e12b4b047afb' existiert nicht in der Datenbank", toDelete.isPresent(), is(true));
+        repository.delete(toDelete.get());
         
         final Collection<Recipe> recipes = repository.findByTitleLike("%Spaghetti%");
         assertNotNull(recipes);

@@ -17,7 +17,7 @@ public class JsonDataSetTest {
     @Test
     public void shouldBeRightTables() throws DataSetException, IOException {
         
-        JsonDataSet dataSet = new JsonDataSet("/dbUnit/forDbUnitRuleTest.json");
+        JsonDataSet dataSet = new JsonDataSet("/dbUnit/forDbUnitExtensionTest.json");
         String[] tables = dataSet.getTableNames();
         
         assertThat(tables, is(notNullValue()));
@@ -42,7 +42,7 @@ public class JsonDataSetTest {
     @Test
     public void shouldBeRightITable() throws DataSetException, IOException {
         
-        JsonDataSet dataSet = new JsonDataSet("/dbUnit/forDbUnitRuleTest.json");
+        JsonDataSet dataSet = new JsonDataSet("/dbUnit/forDbUnitExtensionTest.json");
         ITable table = dataSet.getTable("RECIPE");
         
         assertThat(table.getValue(0, "ID"), is(instanceOf(Number.class)));

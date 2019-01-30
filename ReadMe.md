@@ -40,7 +40,7 @@ Beispiel JUnit-Test
 @UsingDataSet(value = { prepare.json })
 public class ProcessFacadeIT {
 
-	/* Required for extension */
+    /* Required for extension */
     private Connection connection = getConnection();
 
     @Test
@@ -52,7 +52,25 @@ public class ProcessFacadeIT {
 }
 ```
 
-<h3>Weiter Dokumentationen siehe im Wiki: https://github.com/rene-anderes/dbUnitBurner5/wiki</h3>
+Beispiel mit Spring
+```
+@ExtendWith(SpringExtension.class)
+@ExtendWith(DbUnitExtension.class)
+@ContextConfiguration(locations = { "classpath:/sample/application-context.xml" })
+public class RecipeRepositoryIT {
+
+    @Inject
+    private RecipeRepository repository;
+    @Inject @SuppressWarnings("unused")
+    private DataSource datasource; /* Required for extension */
+        
+    @Test
+    @UsingDataSet(value = { "/sample/prepare.json" })
+    @ShouldMatchDataSet(
+            value = { "/sample/prepare.json" },
+            orderBy = { "RECIPE.UUID", "INGREDIENT.ID" })
+    public void shouldBeFindAll() {
+        Iterable<Recipe> recipes = repository.findAll();
 
 [![](https://jitpack.io/v/rene-anderes/dbUnitBurner.svg)](https://jitpack.io/#rene-anderes/dbUnitBurner)
 
