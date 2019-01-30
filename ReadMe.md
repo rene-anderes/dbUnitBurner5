@@ -71,7 +71,8 @@ public class RecipeRepositoryIT {
             orderBy = { "RECIPE.UUID", "INGREDIENT.ID" })
     public void shouldBeFindAll() {
         Iterable<Recipe> recipes = repository.findAll();
+```
 
-[![](https://jitpack.io/v/rene-anderes/dbUnitBurner.svg)](https://jitpack.io/#rene-anderes/dbUnitBurner)
+
 
 
