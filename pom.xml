@@ -3,7 +3,7 @@
 
     <groupId>org.anderes.edu</groupId>
     <artifactId>dbunitburner5</artifactId>
-    <version>1.0.0-RELEASE</version>
+    <version>1.0.1-RELEASE</version>
     <packaging>jar</packaging>
 
     <name>dbunitburner</name>
@@ -35,10 +35,10 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <org.springframework.version>5.1.4.RELEASE</org.springframework.version>
-        <db.derby.version>10.13.1.1</db.derby.version>
+        <org.springframework.version>5.1.8.RELEASE</org.springframework.version>
+        <db.derby.version>10.14.2.0</db.derby.version>
         <mysql.version>5.1.36</mysql.version>
-        <eclipselink.version>2.7.1</eclipselink.version>
+        <eclipselink.version>2.7.4</eclipselink.version>
         <slf4j.version>1.7.25</slf4j.version>
         <junit.jupiter.version>5.3.2</junit.jupiter.version>
         <mockito.version>2.23.4</mockito.version>
@@ -133,7 +133,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.8</version>
+            <version>2.9.9.2</version>
         </dependency>
         <!-- / JSON Jackson -->
         <!-- Weitere Dependencies -->
@@ -153,7 +153,7 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
-            <version>2.1.4.RELEASE</version>
+            <version>2.1.9.RELEASE</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -171,12 +171,6 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>4.3.2.Final</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>javax.persistence</artifactId>
-            <version>2.1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
