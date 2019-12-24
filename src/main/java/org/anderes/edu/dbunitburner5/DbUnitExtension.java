@@ -59,7 +59,7 @@ public class DbUnitExtension implements BeforeEachCallback, AfterEachCallback {
     public DbUnitExtension(final Connection connection) {
         this.connection = Optional.of(connection);
     }
-   
+    
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
         logger.trace("afterEach");
