@@ -39,20 +39,27 @@ import org.dbunit.util.fileloader.CsvDataFileLoader;
 import org.dbunit.util.fileloader.DataFileLoader;
 import org.dbunit.util.fileloader.FlatXmlDataFileLoader;
 import org.dbunit.util.fileloader.XlsDataFileLoader;
-import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DbUnitExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback {
+public class DbUnitExtension implements BeforeEachCallback, AfterEachCallback {
 
     private Logger logger = LoggerFactory.getLogger(DbUnitExtension.class);
     private IDatabaseTester databaseTester;
+    private final Optional<Connection> connection;
         
+    public DbUnitExtension() {
+        this.connection = Optional.empty();
+    }
+    
+    public DbUnitExtension(final Connection connection) {
+        this.connection = Optional.of(connection);
+    }
+   
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
         logger.trace("afterEach");
@@ -75,14 +82,17 @@ public class DbUnitExtension implements BeforeAllCallback, AfterAllCallback, Bef
     }
     
     private Connection getConnection(ExtensionContext context) throws Exception {
-        Class<?> testClass = context.getRequiredTestClass();
+        if (connection.isPresent()) {
+            return connection.get();
+        }
+        final Class<?> testClass = context.getRequiredTestClass();
         Optional<Field> fieldFound = Arrays.stream(testClass.getDeclaredFields()).filter(f -> f.getType() == DataSource.class).findFirst();
         if (fieldFound.isPresent()) {
             Field field = fieldFound.get();
             if (!field.isAccessible()) {
                 field.setAccessible(true);
             }
-            Connection connection = ((DataSource) field.get(context.getRequiredTestInstance())).getConnection();
+            final Connection connection = ((DataSource) field.get(context.getRequiredTestInstance())).getConnection();
             if (connection == null) {
                 throw new RuntimeException("Connection not initialized correctly");
             }
@@ -94,7 +104,7 @@ public class DbUnitExtension implements BeforeAllCallback, AfterAllCallback, Bef
                 if (!field.isAccessible()) {
                     field.setAccessible(true);
                 }
-                Connection connection = (Connection) field.get(context.getRequiredTestInstance());
+                final Connection connection = (Connection) field.get(context.getRequiredTestInstance());
                 if (connection == null) {
                     throw new RuntimeException("Connection not initialized correctly");
                 }
@@ -102,18 +112,6 @@ public class DbUnitExtension implements BeforeAllCallback, AfterAllCallback, Bef
             }
         }
         throw new RuntimeException("no connection !!");
-    }
-
-    @Override
-    public void afterAll(ExtensionContext context) throws Exception {
-        logger.trace("afterAll");
-        
-    }
-
-    @Override
-    public void beforeAll(ExtensionContext context) throws Exception {
-        logger.trace("beforeAll");
-        
     }
 
     private void before(final ExtensionContext context) throws Exception {
