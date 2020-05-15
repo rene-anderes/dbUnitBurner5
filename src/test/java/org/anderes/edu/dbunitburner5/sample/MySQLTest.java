@@ -1,9 +1,7 @@
 package org.anderes.edu.dbunitburner5.sample;
 
 import static org.eclipse.persistence.config.PersistenceUnitProperties.ECLIPSELINK_PERSISTENCE_XML;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.Connection;
 import java.util.HashMap;
@@ -54,14 +52,14 @@ public class MySQLTest {
         final Iterable<Recipe> recipes = manager.createQuery("select r from Recipe r", Recipe.class).getResultList();
         
         // then
-        assertThat(recipes, is(notNullValue()));
-        assertThat(recipes.iterator().hasNext(), is(true));
+        assertThat(recipes).isNotNull();
+        assertThat(recipes.iterator().hasNext()).isTrue();
         int counter = 0;
         for (Recipe recipe : recipes) {
-            assertThat(recipe.getTitle(), is(notNullValue()));
+            assertThat(recipe.getTitle()).isNotNull();
             counter++;
         }
-        assertThat(counter, is(2));
+        assertThat(counter).isEqualTo(2);
     }
     
     private static Map<String, String> getProperties() {

@@ -1,13 +1,9 @@
 package org.anderes.edu.dbunitburner5;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 
-import org.anderes.edu.dbunitburner5.JsonDataSet;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITable;
 import org.junit.jupiter.api.Test;
@@ -20,10 +16,10 @@ public class JsonDataSetTest {
         JsonDataSet dataSet = new JsonDataSet("/dbUnit/forDbUnitExtensionTest.json");
         String[] tables = dataSet.getTableNames();
         
-        assertThat(tables, is(notNullValue()));
-        assertThat(tables.length, is(2));
-        assertThat(tables[0], is("RECIPE"));
-        assertThat(tables[1], is("INGREDIENT"));
+        assertThat(tables).isNotNull();
+        assertThat(tables.length).isEqualTo(2);
+        assertThat(tables[0]).isEqualTo("RECIPE");
+        assertThat(tables[1]).isEqualTo("INGREDIENT");
     }
     
     @Test
@@ -32,11 +28,11 @@ public class JsonDataSetTest {
         JsonDataSet dataSet = new JsonDataSet("/sample/prepare.json");
         String[] tables = dataSet.getTableNames();
         
-        assertThat(tables, is(notNullValue()));
-        assertThat(tables.length, is(3));
-        assertThat(tables[0], is("RECIPE"));
-        assertThat(tables[1], is("TAGS"));
-        assertThat(tables[2], is("INGREDIENT"));
+        assertThat(tables).isNotNull();
+        assertThat(tables.length).isEqualTo(3);
+        assertThat(tables[0]).isEqualTo("RECIPE");
+        assertThat(tables[1]).isEqualTo("TAGS");
+        assertThat(tables[2]).isEqualTo("INGREDIENT");
     }
     
     @Test
@@ -45,13 +41,13 @@ public class JsonDataSetTest {
         JsonDataSet dataSet = new JsonDataSet("/dbUnit/forDbUnitExtensionTest.json");
         ITable table = dataSet.getTable("RECIPE");
         
-        assertThat(table.getValue(0, "ID"), is(instanceOf(Number.class)));
-        assertThat((Integer)table.getValue(0, "ID"), is(100));
-        assertThat(table.getValue(0, "TITLE"), is(instanceOf(String.class)));
-        assertThat((String)table.getValue(0, "TITLE"), is("Arabische Spaghetti"));
-        assertThat(table.getValue(0, "PREAMBLE"), is(instanceOf(String.class)));
-        assertThat((String)table.getValue(0, "PREAMBLE"), is("Da bei diesem Rezept das Scharfe (Curry) mit dem Süssen (Sultaninen) gemischt wird, habe ich diese Rezept \"Arabische Spaghetti\" benannt."));
-        assertThat(table.getValue(0, "ADDINGDATE"), is(instanceOf(String.class)));
-        assertThat((String)table.getValue(0, "ADDINGDATE"), is("22.01.2014 23:03:20"));
+        assertThat(table.getValue(0, "ID")).isInstanceOf(Number.class);
+        assertThat((Integer)table.getValue(0, "ID")).isEqualTo(100);
+        assertThat(table.getValue(0, "TITLE")).isInstanceOf(String.class);
+        assertThat((String)table.getValue(0, "TITLE")).isEqualTo("Arabische Spaghetti");
+        assertThat(table.getValue(0, "PREAMBLE")).isInstanceOf(String.class);
+        assertThat((String)table.getValue(0, "PREAMBLE")).isEqualTo("Da bei diesem Rezept das Scharfe (Curry) mit dem Süssen (Sultaninen) gemischt wird, habe ich diese Rezept \"Arabische Spaghetti\" benannt.");
+        assertThat(table.getValue(0, "ADDINGDATE")).isInstanceOf(String.class);
+        assertThat((String)table.getValue(0, "ADDINGDATE")).isEqualTo("22.01.2014 23:03:20");
     }
 }

@@ -1,20 +1,14 @@
 package org.anderes.edu.dbunitburner5;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static java.sql.Types.DATE;
+import static java.sql.Types.INTEGER;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import org.anderes.edu.dbunitburner5.CustomDateDataType;
-import org.anderes.edu.dbunitburner5.MySqlDateDataTypeFactory;
 import org.dbunit.dataset.datatype.DataType;
 import org.dbunit.dataset.datatype.DataTypeException;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.dbunit.dataset.datatype.IntegerDataType;
 import org.junit.jupiter.api.Test;
-
-import static java.sql.Types.*;
 
 public class MySqlDateDataTypeFactoryTest {
 
@@ -26,8 +20,8 @@ public class MySqlDateDataTypeFactoryTest {
         // when
         DataType dataType = factory.createDataType(DATE, "");
         // then
-        assertThat(dataType, is(not(nullValue())));
-        assertThat(dataType, instanceOf(CustomDateDataType.class));
+        assertThat(dataType).isNotNull();
+        assertThat(dataType).isInstanceOf(CustomDateDataType.class);
     }
     
     @Test
@@ -37,7 +31,7 @@ public class MySqlDateDataTypeFactoryTest {
         // when
         DataType dataType = factory.createDataType(INTEGER, "");
         // then
-        assertThat(dataType, is(not(nullValue())));
-        assertThat(dataType, instanceOf(IntegerDataType.class));
+        assertThat(dataType).isNotNull();
+        assertThat(dataType).isInstanceOf(IntegerDataType.class);
     }
 }

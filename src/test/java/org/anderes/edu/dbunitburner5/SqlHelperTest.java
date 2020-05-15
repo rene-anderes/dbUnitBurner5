@@ -1,8 +1,6 @@
 package org.anderes.edu.dbunitburner5;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -19,7 +17,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.anderes.edu.dbunitburner5.SqlHelper;
 import org.junit.jupiter.api.Test;
 
 public class SqlHelperTest {
@@ -29,12 +26,12 @@ public class SqlHelperTest {
         Path sqlFile = Paths.get("sql", "DeleteTableContentScript.sql");
         Collection<String> commands = SqlHelper.extractSqlCommands(sqlFile);
         
-        assertThat(commands, is(notNullValue()));
-        assertThat(commands.size(), is(3));
+        assertThat(commands).isNotNull();
+        assertThat(commands.size()).isEqualTo(3);
         final Iterator<String> iterator = commands.iterator();
-        assertThat(iterator.next(), is("delete from TAGS"));
-        assertThat(iterator.next(), is("delete from INGREDIENT"));
-        assertThat(iterator.next(), is("delete from RECIPE"));
+        assertThat(iterator.next()).isEqualTo("delete from TAGS");
+        assertThat(iterator.next()).isEqualTo("delete from INGREDIENT");
+        assertThat(iterator.next()).isEqualTo("delete from RECIPE");
     }
     
     @Test
@@ -42,12 +39,12 @@ public class SqlHelperTest {
         Path sqlFile = Paths.get("sql", "DeleteTableContentScriptUnix.sql");
         Collection<String> commands = SqlHelper.extractSqlCommands(sqlFile);
         
-        assertThat(commands, is(notNullValue()));
-        assertThat(commands.size(), is(3));
+        assertThat(commands).isNotNull();
+        assertThat(commands.size()).isEqualTo(3);
         final Iterator<String> iterator = commands.iterator();
-        assertThat(iterator.next(), is("delete from TAGS"));
-        assertThat(iterator.next(), is("delete from INGREDIENT"));
-        assertThat(iterator.next(), is("delete from RECIPE"));
+        assertThat(iterator.next()).isEqualTo("delete from TAGS");
+        assertThat(iterator.next()).isEqualTo("delete from INGREDIENT");
+        assertThat(iterator.next()).isEqualTo("delete from RECIPE");
     }
     
     @Test
@@ -73,7 +70,7 @@ public class SqlHelperTest {
         int[] values = SqlHelper.execute(connection, commands);
         
         // then
-        assertThat(values.length, is(3));
+        assertThat(values.length).isEqualTo(3);
         verify(mockStatement).addBatch("delete from INGREDIENT");
         verify(mockStatement).addBatch("delete from TAGS");
         verify(mockStatement).addBatch("delete from RECIPE");
