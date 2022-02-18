@@ -9,7 +9,7 @@
 
     <name>dbunitburner</name>
 
-    <description>Junit 5-Extension welche die Möglichkeit bietet die für DBUnit notwendigen Datenbank-Files mittels Annotierung im Code zu verwenden.</description>
+    <description>Junit 5-Extension welche die Möglichkeit bietet, die für DBUnit notwendigen Datenbank-Files mittels Annotierung im Code zu verwenden.</description>
     <url>https://github.com/rene-anderes/dbUnitBurner5</url>
 
     <developers>
@@ -42,7 +42,7 @@
         <eclipselink.version>2.7.7</eclipselink.version>
         <slf4j.version>1.7.25</slf4j.version>
         <junit.jupiter.version>5.6.2</junit.jupiter.version>
-        <mockito.version>3.3.3</mockito.version>
+        <mockito.version>4.3.1</mockito.version>
     </properties>
 
     <build>
@@ -132,7 +132,7 @@
         <dependency>
             <groupId>org.dbunit</groupId>
             <artifactId>dbunit</artifactId>
-            <version>2.7.0</version>
+            <version>2.7.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>junit</groupId>
@@ -145,20 +145,26 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.11.0</version>
+            <version>2.13.1</version>
         </dependency>
         <!-- / JSON Jackson -->
         <!-- Weitere Dependencies -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.10</version>
+            <version>3.12.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
+        <dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi</artifactId>
+		    <version>5.2.0</version>
+		</dependency>
+
         <!-- / Weitere Dependencies -->
 
         <!-- Testabhängigkeiten -->
