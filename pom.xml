@@ -38,7 +38,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <org.springframework.version>5.3.16</org.springframework.version>
         <db.derby.version>10.14.2.0</db.derby.version>
-        <mysql.version>5.1.36</mysql.version>
+        <mysql.version>8.0.16</mysql.version>
         <eclipselink.version>2.7.10</eclipselink.version>
         <slf4j.version>1.7.25</slf4j.version>
         <junit.jupiter.version>5.8.2</junit.jupiter.version>
