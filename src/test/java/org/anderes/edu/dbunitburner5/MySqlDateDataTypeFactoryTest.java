@@ -10,28 +10,26 @@ import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.dbunit.dataset.datatype.IntegerDataType;
 import org.junit.jupiter.api.Test;
 
-public class MySqlDateDataTypeFactoryTest {
+class MySqlDateDataTypeFactoryTest {
 
     
     @Test
-    public void shouldBeCorrectDateDataType() throws DataTypeException {
+    void shouldBeCorrectDateDataType() throws DataTypeException {
         // given
         IDataTypeFactory factory = new MySqlDateDataTypeFactory();
         // when
         DataType dataType = factory.createDataType(DATE, "");
         // then
-        assertThat(dataType).isNotNull();
-        assertThat(dataType).isInstanceOf(CustomDateDataType.class);
+        assertThat(dataType).isNotNull().isInstanceOf(CustomDateDataType.class);
     }
     
     @Test
-    public void shouldBeOtherDataType() throws DataTypeException {
+    void shouldBeOtherDataType() throws DataTypeException {
         // given
         IDataTypeFactory factory = new MySqlDateDataTypeFactory();
         // when
         DataType dataType = factory.createDataType(INTEGER, "");
         // then
-        assertThat(dataType).isNotNull();
-        assertThat(dataType).isInstanceOf(IntegerDataType.class);
+        assertThat(dataType).isNotNull().isInstanceOf(IntegerDataType.class);
     }
 }

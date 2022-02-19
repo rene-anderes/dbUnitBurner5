@@ -15,7 +15,7 @@ import org.dbunit.dataset.datatype.TypeCastException;
 
 public class CustomDateDataType extends AbstractDataType {
 
-    private final String formats[] = { "dd.MM.yyyy HH:mm:ss", "dd.MM.yyyy HH:mm", "dd.MM.yyyy" };
+    private final String[] formats = { "dd.MM.yyyy HH:mm:ss", "dd.MM.yyyy HH:mm", "dd.MM.yyyy" };
     
     public CustomDateDataType() {
         super("DATE", Types.DATE, Date.class, false);
@@ -41,7 +41,9 @@ public class CustomDateDataType extends AbstractDataType {
     private Date handleStringValue(final String value) throws TypeCastException {
         try {
             return java.sql.Date.valueOf(value);
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {
+            // nothing to do...
+        }
 
         try {
             return new Date(DateUtils.parseDate(value, formats).getTime());
@@ -66,7 +68,7 @@ public class CustomDateDataType extends AbstractDataType {
 
     @Override
     public void setSqlValue(Object value, int column, PreparedStatement statement) throws SQLException, TypeCastException {
-        statement.setDate(column, (java.sql.Date) typeCast(value));
+        statement.setDate(column, typeCast(value));
     }
 
 }

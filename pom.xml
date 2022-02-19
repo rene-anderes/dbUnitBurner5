@@ -4,7 +4,7 @@
 
     <groupId>org.anderes.edu</groupId>
     <artifactId>dbunitburner5</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.3.0</version>
     <packaging>jar</packaging>
 
     <name>dbunitburner</name>
@@ -215,12 +215,6 @@
             <artifactId>derbyclient</artifactId>
             <version>${db.derby.version}</version>
             <scope>test</scope>
-        </dependency>
-        <!-- MySQL Datanase -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql.version}</version>
         </dependency>
 
         <!-- JUnit -->

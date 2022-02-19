@@ -52,7 +52,7 @@ public class JsonDataSet extends AbstractDataSet {
 
     @Override
     protected ITableIterator createIterator(boolean reverse) throws DataSetException {
-        return new DefaultTableIterator((ITable[]) tables.toArray(new ITable[tables.size()]));
+        return new DefaultTableIterator(tables.toArray(new ITable[tables.size()]));
     }
 
     private class JsonITableParser {
@@ -63,7 +63,7 @@ public class JsonDataSet extends AbstractDataSet {
         public List<ITable> getTables(InputStream jsonStream) throws IOException {
             Validate.notNull(jsonStream);
 
-            final ArrayList<ITable> tables = new ArrayList<ITable>();
+            final ArrayList<ITable> datasetTables = new ArrayList<>();
             final Map<String, Object> dataset = mapper.readValue(jsonStream, Map.class);
             for (Map.Entry<String, Object> entry : dataset.entrySet()) {
                 final List<Map<String, Object>> rows = (List<Map<String, Object>>) entry.getValue();
@@ -73,20 +73,20 @@ public class JsonDataSet extends AbstractDataSet {
                 for (Map<String, Object> row : rows) {
                     fillRow(table, row, rowIndex++);
                 }
-                tables.add(table);
+                datasetTables.add(table);
             }
-            return tables;
+            return datasetTables;
         }
 
         private ITableMetaData getMetaData(String tableName, List<Map<String, Object>> rows) {
-            final LinkedHashSet<String> columns = new LinkedHashSet<String>();
+            final LinkedHashSet<String> columns = new LinkedHashSet<>();
             for (Map<String, Object> row : rows) {
                 for (Map.Entry<String, Object> column : row.entrySet()) {
                     columns.add(column.getKey());
                 }
             }
             final List<Column> list = columns.stream().map(s -> new Column(s, DataType.UNKNOWN)).collect(Collectors.toList());
-            return new DefaultTableMetaData(tableName, (Column[]) list.toArray(new Column[list.size()]));
+            return new DefaultTableMetaData(tableName, list.toArray(new Column[list.size()]));
         }
 
         private void fillRow(DefaultTable table, Map<String, Object> row, int rowIndex) {

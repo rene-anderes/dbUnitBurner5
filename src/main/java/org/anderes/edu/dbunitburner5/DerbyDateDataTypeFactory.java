@@ -24,10 +24,13 @@ public class DerbyDateDataTypeFactory extends DefaultDataTypeFactory {
     
     @Override
     public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
-        Optional<DataType> optionalDatType = DbUnitBurnerHelper.createDataType(sqlType, sqlTypeName);
+        Optional<DataType> optionalDatType = DbUnitBurnerHelper.createDataType(sqlType);
         if (optionalDatType.isPresent()) {
             final DataType dataType = optionalDatType.get();
-            logger.debug(String.format("Für den SQL-Type '%s' wird Klasse '%s' eingesetzt.", sqlTypeName, dataType.getClass().getName()));
+            if (logger.isDebugEnabled()) {
+                final String message = String.format("Für den SQL-Type '%s' wird Klasse '%s' eingesetzt.", sqlTypeName, dataType.getClass().getName());
+                logger.debug(message);
+            }
             return dataType;
         }
         return super.createDataType(sqlType, sqlTypeName);

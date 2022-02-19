@@ -20,11 +20,15 @@ import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class DbUnitBurnerHelper {
+public final class DbUnitBurnerHelper {
 
     private static Logger logger = LoggerFactory.getLogger(DbUnitBurnerHelper.class);
     
-    public static Optional<DataType> createDataType(int sqlType, String sqlTypeName) {
+    private DbUnitBurnerHelper() {
+        super();
+    }
+    
+    public static Optional<DataType> createDataType(int sqlType) {
         if (sqlType == TIMESTAMP) {
             return Optional.of(new CustomTimestampDataType());
         } else if (sqlType == DATE) {

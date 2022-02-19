@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 @Disabled("Testklasse nur für Dokumentationszwecke")
-public class DbUnitRegisterExtensionTest {
+class DbUnitRegisterExtensionTest {
 
     private static Connection connection = getConnection();
     @RegisterExtension

@@ -5,7 +5,6 @@ import static org.apache.commons.lang3.StringUtils.substringAfter;
 import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.dbunit.database.DatabaseConfig.PROPERTY_DATATYPE_FACTORY;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -16,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.sql.DataSource;
@@ -70,18 +70,18 @@ public class DbUnitExtension implements BeforeEachCallback, AfterEachCallback {
     public void beforeEach(ExtensionContext context) throws Exception {
         logger.trace("beforeEach");
         
-        try {
-            final Connection connection = getConnection(context);
-            DatabaseConnection databaseConnection = new DatabaseConnection(connection);
-            databaseConnection.getConfig().setProperty(PROPERTY_DATATYPE_FACTORY, DbUnitBurnerHelper.resolveDataTypeFactory(connection));
+        try {          
+            final Connection contextConnection = getConnection(context);
+            DatabaseConnection databaseConnection = new DatabaseConnection(contextConnection);
+            databaseConnection.getConfig().setProperty(PROPERTY_DATATYPE_FACTORY, DbUnitBurnerHelper.resolveDataTypeFactory(contextConnection));
             databaseTester = new DefaultDatabaseTester(databaseConnection);
             before(context);
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new DbUnitExtensionException(e.getMessage());
         }
     }
     
-    private Connection getConnection(ExtensionContext context) throws Exception {
+    private Connection getConnection(ExtensionContext context) throws DbUnitExtensionException, IllegalArgumentException, IllegalAccessException, SQLException {
         if (connection.isPresent()) {
             return connection.get();
         }
@@ -92,11 +92,11 @@ public class DbUnitExtension implements BeforeEachCallback, AfterEachCallback {
             if (!field.isAccessible()) {
                 field.setAccessible(true);
             }
-            final Connection connection = ((DataSource) field.get(context.getRequiredTestInstance())).getConnection();
-            if (connection == null) {
-                throw new RuntimeException("Connection not initialized correctly");
+            final Connection conn = ((DataSource) field.get(context.getRequiredTestInstance())).getConnection();
+            if (Objects.isNull(conn)) {
+                throw new DbUnitExtensionException("Connection not initialized correctly");
             }
-            return connection;
+            return conn;
         } else {
             fieldFound = Arrays.stream(testClass.getDeclaredFields()).filter(f -> f.getType() == Connection.class).findFirst();
             if (fieldFound.isPresent()) {
@@ -104,14 +104,14 @@ public class DbUnitExtension implements BeforeEachCallback, AfterEachCallback {
                 if (!field.isAccessible()) {
                     field.setAccessible(true);
                 }
-                final Connection connection = (Connection) field.get(context.getRequiredTestInstance());
-                if (connection == null) {
-                    throw new RuntimeException("Connection not initialized correctly");
+                final Connection conn = (Connection) field.get(context.getRequiredTestInstance());
+                if (conn == null) {
+                    throw new DbUnitExtensionException("Connection not initialized correctly");
                 }
-                return connection;
+                return conn;
             }
         }
-        throw new RuntimeException("no connection !!");
+        throw new DbUnitExtensionException("no connection !!");
     }
 
     private void before(final ExtensionContext context) throws Exception {
@@ -174,8 +174,10 @@ public class DbUnitExtension implements BeforeEachCallback, AfterEachCallback {
         return null;
     }
 
-    private void processUsingDataSet(final UsingDataSet usingDataSet, final DatabaseOperation databaseOperation) throws DataSetException, Exception, SQLException {
-        logger.trace("processUsingDataSet: " + usingDataSet.toString());
+    private void processUsingDataSet(final UsingDataSet usingDataSet, final DatabaseOperation databaseOperation) throws Exception {
+        if (logger.isTraceEnabled()) {
+            logger.trace(String.format("processUsingDataSet: %s", usingDataSet.toString()));
+        }
         final String[] dataSetFiles = usingDataSet.value();
         final CompositeDataSet dataSet = buildDataSet(dataSetFiles);
         final IDatabaseConnection databaseConnection = databaseTester.getConnection();
@@ -187,12 +189,14 @@ public class DbUnitExtension implements BeforeEachCallback, AfterEachCallback {
     }
     
     private void processCleanupScripts(final CleanupUsingScript cleanupUsingScript) throws Exception {
-        logger.trace("processCleanupScripts: " + cleanupUsingScript.toString());
+        if (logger.isTraceEnabled()) {
+            logger.trace(String.format("processCleanupScripts: %s", cleanupUsingScript.toString()));
+        }
         final String[] cleanupFiles = cleanupUsingScript.value();
         processSqlScript(cleanupFiles);
     }
 
-    private void processSqlScript(final String[] cleanupFiles) throws IOException, SQLException, Exception {
+    private void processSqlScript(final String[] cleanupFiles) throws Exception {
         logger.trace("processSqlScript");
         for (String cleanupFile : cleanupFiles) {
             final Collection<String> commands = SqlHelper.extractSqlCommands(Paths.get(cleanupFile));
@@ -205,7 +209,7 @@ public class DbUnitExtension implements BeforeEachCallback, AfterEachCallback {
         if (logger.isInfoEnabled()) {
             final String[] commandArray = commands.toArray(new String[commands.size()]);
             for (int index = 0 ; index < commands.size(); index++) {
-                logger.info(commandArray[index] + ", Result: " + values[index]);
+                logger.info(String.format("%s, Result: %s", commandArray[index], values[index]));
             }
         }
     }
@@ -217,7 +221,7 @@ public class DbUnitExtension implements BeforeEachCallback, AfterEachCallback {
     }
 
     /*package*/ CompositeDataSet buildDataSet(String[] dataSetFiles) throws DataSetException {
-        final List<IDataSet> dataSets = new ArrayList<IDataSet>(dataSetFiles.length);
+        final List<IDataSet> dataSets = new ArrayList<>(dataSetFiles.length);
         for (String dataSetFile : dataSetFiles) {
             DataFileLoader loader = identifyLoader(dataSetFile);
             IDataSet dataset = loader.load(dataSetFile);
@@ -265,7 +269,7 @@ public class DbUnitExtension implements BeforeEachCallback, AfterEachCallback {
     }
     
     /*package*/ Map<String, String[]> buildMapFromStringArray(final String[] array) {
-        final Map<String, List<String>> map = new HashMap<String, List<String>>();
+        final Map<String, List<String>> map = new HashMap<>();
         for (String value : array) {
             if (containsNone(value, ".")) {
                 continue;
@@ -275,15 +279,14 @@ public class DbUnitExtension implements BeforeEachCallback, AfterEachCallback {
             if (map.containsKey(table)) {
                 map.get(table).add(column);
             } else {
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 list.add(column);
                 map.put(table, list);
             }
         }
-        final Map<String, String[]> returnValue = new HashMap<String, String[]>(map.size());
-        for (String tablename : map.keySet()) {
-            returnValue.put(tablename, map.get(tablename).toArray(new String[0]));
-        }
+        
+        final Map<String, String[]> returnValue = new HashMap<>(map.size());
+        map.entrySet().stream().forEach(entry -> returnValue.put(entry.getKey(), entry.getValue().toArray(new String[0])));
         return returnValue;
     }
     

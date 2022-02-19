@@ -24,7 +24,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @Disabled("Für diesen Test muss eine MySQL-Server-Instanz laufen und "
                 + "auf dieser eine Datenbank mittels dem Script 'sql/mysql/mysql-createUserAndSchema.sql' ein DB-schema erstellt sein.")
 @ExtendWith(DbUnitExtension.class)
-public class MySQLTest {
+class MySQLTest {
     
     private static EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("mySqlPU", getProperties());
     private EntityManager manager;
@@ -46,7 +46,7 @@ public class MySQLTest {
     @ShouldMatchDataSet(
             value = { "/sample/prepare.json" },
             orderBy = { "RECIPE.UUID", "INGREDIENT.ID" })
-    public void shouldBeFindAll() {
+    void shouldBeFindAll() {
         
         // when
         final Iterable<Recipe> recipes = manager.createQuery("select r from Recipe r", Recipe.class).getResultList();

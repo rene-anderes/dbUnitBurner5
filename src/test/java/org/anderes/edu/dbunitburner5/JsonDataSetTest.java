@@ -8,35 +8,33 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITable;
 import org.junit.jupiter.api.Test;
 
-public class JsonDataSetTest {
+class JsonDataSetTest {
 
     @Test
-    public void shouldBeRightTables() throws DataSetException, IOException {
+    void shouldBeRightTables() throws DataSetException, IOException {
         
         JsonDataSet dataSet = new JsonDataSet("/dbUnit/forDbUnitExtensionTest.json");
         String[] tables = dataSet.getTableNames();
         
-        assertThat(tables).isNotNull();
-        assertThat(tables.length).isEqualTo(2);
+        assertThat(tables).isNotNull().hasSize(2);
         assertThat(tables[0]).isEqualTo("RECIPE");
         assertThat(tables[1]).isEqualTo("INGREDIENT");
     }
     
     @Test
-    public void shouldBeRightTablesComplete() throws DataSetException, IOException {
+    void shouldBeRightTablesComplete() throws DataSetException, IOException {
         
         JsonDataSet dataSet = new JsonDataSet("/sample/prepare.json");
         String[] tables = dataSet.getTableNames();
         
-        assertThat(tables).isNotNull();
-        assertThat(tables.length).isEqualTo(3);
+        assertThat(tables).isNotNull().hasSize(3);
         assertThat(tables[0]).isEqualTo("RECIPE");
         assertThat(tables[1]).isEqualTo("TAGS");
         assertThat(tables[2]).isEqualTo("INGREDIENT");
     }
     
     @Test
-    public void shouldBeRightITable() throws DataSetException, IOException {
+    void shouldBeRightITable() throws DataSetException, IOException {
         
         JsonDataSet dataSet = new JsonDataSet("/dbUnit/forDbUnitExtensionTest.json");
         ITable table = dataSet.getTable("RECIPE");

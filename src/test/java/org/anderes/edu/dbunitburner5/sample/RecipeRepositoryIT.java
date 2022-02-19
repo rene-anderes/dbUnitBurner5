@@ -27,7 +27,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ExtendWith(DbUnitExtension.class)
 @ContextConfiguration(locations = { "classpath:/sample/application-context.xml" })
-public class RecipeRepositoryIT {
+class RecipeRepositoryIT {
 
     @Inject
     private RecipeRepository repository;
@@ -39,7 +39,7 @@ public class RecipeRepositoryIT {
     @ShouldMatchDataSet(
             value = { "/sample/prepare.json" },
             orderBy = { "RECIPE.UUID", "INGREDIENT.ID" })
-    public void shouldBeFindAll() {
+    void shouldBeFindAll() {
         Iterable<Recipe> recipes = repository.findAll();
         assertThat(recipes).isNotNull();
         assertThat(recipes.iterator().hasNext()).isTrue();
@@ -53,7 +53,7 @@ public class RecipeRepositoryIT {
     
     @Test
     @UsingDataSetScript(value = { "/sql/LoadTestdata.sql" })
-    public void shouldBeFindAllTestdata() {
+    void shouldBeFindAllTestdata() {
         Iterable<Recipe> recipes = repository.findAll();
         assertThat(recipes).isNotNull();
         assertThat(recipes.iterator().hasNext()).isTrue();
@@ -67,9 +67,9 @@ public class RecipeRepositoryIT {
     
     @Test
     @UsingDataSet(value = { "/sample/prepare.xls" })
-    public void shouldBeOneRecipe() {
+    void shouldBeOneRecipe() {
         final Optional<Recipe> recipe = repository.findById("c0e5582e-252f-4e94-8a49-e12b4b047afb");
-        assertThat(recipe.isPresent()).isTrue();
+        assertThat(recipe).isPresent();
         assertThat(recipe.get().getTitle()).isEqualTo("Arabische Spaghetti");
     }
     
@@ -78,11 +78,11 @@ public class RecipeRepositoryIT {
     @ShouldMatchDataSet(
             value = { "/sample/prepare.xls" },
             orderBy = { "RECIPE.UUID", "INGREDIENT.ID" })
-    public void getRecipesByTitle() {
+    void getRecipesByTitle() {
         final Collection<Recipe> recipes = repository.findByTitleLike("%Spaghetti%");
 
         assertNotNull(recipes);
-        assertThat(recipes.size()).isEqualTo(1);
+        assertThat(recipes).hasSize(1);
         final Recipe recipe = recipes.iterator().next();
         assertThat(recipe.getTitle()).isEqualTo("Arabische Spaghetti");
     }
@@ -90,7 +90,7 @@ public class RecipeRepositoryIT {
     @Test
     @CleanupUsingScript(value = { "/sql/DeleteTableContentScript.sql" })
     @UsingDataSet(value = { "/sample/prepare.xls" })
-    public void shouldBeSaveNewRecipe() {
+    void shouldBeSaveNewRecipe() {
         // given
         final Recipe newRecipe = RecipeBuilder.buildRecipe();
         
@@ -102,7 +102,7 @@ public class RecipeRepositoryIT {
         assertThat(savedRecipe.getUuid()).isNotNull();
         
         final Optional<Recipe> findRecipe = repository.findById(savedRecipe.getUuid());
-        assertThat(findRecipe.isPresent()).isTrue();
+        assertThat(findRecipe).isPresent();
         assertNotSame(newRecipe, findRecipe.get());
         assertThat(newRecipe).isEqualTo(findRecipe.get());
     }
@@ -113,23 +113,23 @@ public class RecipeRepositoryIT {
             excludeColumns = { "INGREDIENT.ID" },
             orderBy = { "RECIPE.UUID", "INGREDIENT.ANNOTATION" }
     )
-    public void shouldBeUpdateRecipe() {
+    void shouldBeUpdateRecipe() {
         final Optional<Recipe> updateRecipe = repository.findById("c0e5582e-252f-4e94-8a49-e12b4b047afb");
-        assertThat(updateRecipe.isPresent()).isTrue();
+        assertThat(updateRecipe).isPresent();
         updateRecipe.get().setPreamble("Neuer Preamble vom Test");
         updateRecipe.get().addIngredient(new Ingredient("1", "Tomate", "vollreif"));
         final Recipe savedRecipe = repository.save(updateRecipe.get());
         
         assertThat(savedRecipe).isNotNull();
         assertThat(savedRecipe.getPreamble()).isEqualTo("Neuer Preamble vom Test");
-        assertThat(savedRecipe.getIngredients().size()).isEqualTo(4);
+        assertThat(savedRecipe.getIngredients()).hasSize(4);
         
         final Optional<Recipe> findRecipe = repository.findById(savedRecipe.getUuid());
-        assertThat(findRecipe.isPresent()).isTrue();
+        assertThat(findRecipe).isPresent();
         final Recipe recipe = findRecipe.get();
         assertThat(recipe.getPreamble()).isEqualTo("Neuer Preamble vom Test");
         assertNotSame(updateRecipe.get(), recipe);
-        assertThat(updateRecipe.get()).isEqualTo(recipe);
+        assertThat(updateRecipe).contains(recipe);
     }
     
     @Test
@@ -137,21 +137,20 @@ public class RecipeRepositoryIT {
     @ShouldMatchDataSet(value = { "/sample/expected-afterDeleteOne.xls" },
             excludeColumns = { "RECIPE.ADDINGDATE" },
             orderBy = { "RECIPE.UUID", "INGREDIENT.ID" })
-    public void shouldBeDelete() {
+    void shouldBeDelete() {
         final Optional<Recipe> toDelete = repository.findById("c0e5582e-252f-4e94-8a49-e12b4b047afb");
-        assertThat(toDelete.isPresent()).as("Das Rezept mit der ID 'c0e5582e-252f-4e94-8a49-e12b4b047afb' existiert nicht in der Datenbank").isTrue();
+        assertThat(toDelete).as("Das Rezept mit der ID 'c0e5582e-252f-4e94-8a49-e12b4b047afb' existiert nicht in der Datenbank").isPresent();
         repository.delete(toDelete.get());
         
         final Collection<Recipe> recipes = repository.findByTitleLike("%Spaghetti%");
         assertNotNull(recipes);
-        assertThat(recipes.size()).isEqualTo(0);
+        assertThat(recipes).isEmpty();
     }
     
     @Test
     @UsingDataSet(value = { "/sample/prepare.xls" })
-    public void shouldBeFindAllTag() {
+    void shouldBeFindAllTag() {
         final List<String> tags = repository.findAllTag();
-        assertThat(tags).isNotNull();
-        assertThat(tags.size()).isEqualTo(4);
+        assertThat(tags).isNotNull().hasSize(4);
     }
 }

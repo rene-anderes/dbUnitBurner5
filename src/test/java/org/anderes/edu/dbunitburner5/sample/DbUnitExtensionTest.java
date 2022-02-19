@@ -14,7 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 @Disabled("Testklasse nur für Dokumentationszwecke")
 @ExtendWith(DbUnitExtension.class)
-public class DbUnitExtensionTest {
+class DbUnitExtensionTest {
 
     @SuppressWarnings("unused")
     private Connection connection = getConnection();

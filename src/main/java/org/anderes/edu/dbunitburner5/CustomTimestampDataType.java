@@ -15,7 +15,7 @@ import org.dbunit.dataset.datatype.TypeCastException;
 
 public class CustomTimestampDataType extends AbstractDataType {
 
-    private final String formats[] = { "dd.MM.yyyy HH:mm:ss", "dd.MM.yyyy HH:mm", "dd.MM.yyyy" };
+    private final String[] formats = { "dd.MM.yyyy HH:mm:ss", "dd.MM.yyyy HH:mm", "dd.MM.yyyy" };
     
     public CustomTimestampDataType() {
         super("TIMESTAMP", Types.TIMESTAMP, Timestamp.class, false);
@@ -47,7 +47,9 @@ public class CustomTimestampDataType extends AbstractDataType {
         try {
             long time = java.sql.Date.valueOf(value).getTime();
             return new Timestamp(time);
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {
+            // nothing to do...
+        }
         
         try {
             return new Timestamp(DateUtils.parseDate(value, formats).getTime());
@@ -72,7 +74,7 @@ public class CustomTimestampDataType extends AbstractDataType {
 
     @Override
     public void setSqlValue(Object value, int column, PreparedStatement statement) throws SQLException, TypeCastException {
-        statement.setTimestamp(column, (java.sql.Timestamp) typeCast(value));
+        statement.setTimestamp(column, typeCast(value));
     }
 
 }

@@ -19,15 +19,14 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-public class SqlHelperTest {
+class SqlHelperTest {
     
     @Test
-    public void shouldBeExtractCommands() throws IOException {
+    void shouldBeExtractCommands() throws IOException {
         Path sqlFile = Paths.get("sql", "DeleteTableContentScript.sql");
         Collection<String> commands = SqlHelper.extractSqlCommands(sqlFile);
         
-        assertThat(commands).isNotNull();
-        assertThat(commands.size()).isEqualTo(3);
+        assertThat(commands).isNotNull().hasSize(3);
         final Iterator<String> iterator = commands.iterator();
         assertThat(iterator.next()).isEqualTo("delete from TAGS");
         assertThat(iterator.next()).isEqualTo("delete from INGREDIENT");
@@ -35,12 +34,11 @@ public class SqlHelperTest {
     }
     
     @Test
-    public void shouldBeExtractCommandsUnix() throws IOException {
+    void shouldBeExtractCommandsUnix() throws IOException {
         Path sqlFile = Paths.get("sql", "DeleteTableContentScriptUnix.sql");
         Collection<String> commands = SqlHelper.extractSqlCommands(sqlFile);
         
-        assertThat(commands).isNotNull();
-        assertThat(commands.size()).isEqualTo(3);
+        assertThat(commands).isNotNull().hasSize(3);
         final Iterator<String> iterator = commands.iterator();
         assertThat(iterator.next()).isEqualTo("delete from TAGS");
         assertThat(iterator.next()).isEqualTo("delete from INGREDIENT");
@@ -48,13 +46,13 @@ public class SqlHelperTest {
     }
     
     @Test
-    public void shouldBeWrongPath() throws IOException {
+    void shouldBeWrongPath() throws IOException {
         Path sqlFile = Paths.get("notValid", "sql", "DeleteTableContentScript.sql");
         assertThrows(IOException.class, () -> { SqlHelper.extractSqlCommands(sqlFile); });
     }
 
     @Test
-    public void shouldBeExecuteBatchCommands() throws SQLException {
+    void shouldBeExecuteBatchCommands() throws SQLException {
         // given
         final List<String> commands = new ArrayList<String>(3);
         commands.add("delete from INGREDIENT");
@@ -70,7 +68,7 @@ public class SqlHelperTest {
         int[] values = SqlHelper.execute(connection, commands);
         
         // then
-        assertThat(values.length).isEqualTo(3);
+        assertThat(values).hasSize(3);
         verify(mockStatement).addBatch("delete from INGREDIENT");
         verify(mockStatement).addBatch("delete from TAGS");
         verify(mockStatement).addBatch("delete from RECIPE");

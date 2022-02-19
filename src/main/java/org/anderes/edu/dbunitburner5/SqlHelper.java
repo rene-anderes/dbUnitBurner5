@@ -22,7 +22,11 @@ import org.apache.commons.lang3.Validate;
  * @author René Anderes
  *
  */
-public abstract class SqlHelper {
+public final class SqlHelper {
+    
+    private SqlHelper() {
+        super();
+    }
 
     /**
      * Diese Methode extrahiert SQL-Kommandos aus dem übergebenen SQL-File.
@@ -40,7 +44,7 @@ public abstract class SqlHelper {
             throw new IOException(msg);
         }
         final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8.name()));
-        final ArrayDeque<String> commands = new ArrayDeque<String>();
+        final ArrayDeque<String> commands = new ArrayDeque<>();
         
         String line = null;
         while((line = bufferedReader.readLine()) != null) {
